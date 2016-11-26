@@ -1,0 +1,92 @@
+/*
+ * sama5d3x-enigma.dtsi - Device Tree Include file for Cosino Enigma core Module
+ *
+ * Copyright (C) 2015 - Rodolfo Giometti <giometti@linux.it>
+ *                      HCE Engineering
+ *
+ * Derived from sama5d3xcm.dtsi by:
+ *  Copyright (C) 2013 Atmel,
+ *                2013 Ludovic Desroches <ludovic.desroches@atmel.com>
+ *
+ * Licensed under GPLv2 or later.
+ */
+#include "sama5d36.dtsi"
+
+/ {
+	model = "HCE Cosino Enigma core module";
+	compatible = "hce,enigma", "atmel,sama5d3", "atmel,sama5";
+
+	chosen {
+		bootargs = "console=ttyS0,115200 earlyprintk root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait";
+		stdout-path = "serial0:115200n8";
+	};
+
+	memory {
+		reg = <0x20000000 0x10000000>;
+	};
+
+	clocks {
+		slow_xtal {
+			clock-frequency = <32768>;
+		};
+
+		main_xtal {
+			clock-frequency = <12000000>;
+		};
+	};
+
+	ahb {
+		apb {
+			macb1: ethernet@f802c000 {
+				phy-mode = "rmii";
+				#address-cells = <1>;
+				#size-cells = <0>;
+				status = "okay";
+
+				ethernet-phy@1 {
+					reg = <0x1>;
+				};
+			};
+		};
+
+		nand0: nand@60000000 {
+			nand-bus-width = <8>;
+			nand-ecc-mode = "hw";
+			atmel,has-pmecc;
+			atmel,pmecc-cap = <4>;
+			atmel,pmecc-sector-size = <512>;
+			nand-on-flash-bbt;
+			status = "okay";
+
+			at91bootstrap@0 {
+				label = "bootstrap";
+				reg = <0x0 0x40000>;
+			};
+
+			bootloader@40000 {
+				label = "uboot";
+				reg = <0x40000 0x80000>;
+			};
+
+			bootloaderenv@c0000 {
+				label = "env";
+				reg = <0xc0000 0x20000>;
+			};
+
+			bootloaderenv_redundent@e0000 {
+				label = "evn_redundent";
+				reg = <0xe0000 0x20000>;
+			};
+
+			kernel@100000 {
+				label = "kernel";
+				reg = <0x100000 0x400000>;
+			};
+
+			rootfs@500000 {
+				label = "rootfs";
+				reg = <0x500000 0x0fb00000>;
+			};
+		};
+	};
+};
