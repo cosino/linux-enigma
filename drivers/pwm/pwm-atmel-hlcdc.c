@@ -71,18 +71,6 @@ static int atmel_hlcdc_pwm_config(struct pwm_chip *c,
 		do_div(clk_period_ns, clk_freq);
 	}
 
-	/* Errata: cannot use slow clk on some IP revisions */
-	if ((chip->errata && chip->errata->slow_clk_erratum) ||
-	    clk_period_ns > period_ns) {
-		new_clk = hlcdc->sys_clk;
-		clk_freq = clk_get_rate(new_clk);
-		if (!clk_freq)
-			return -EINVAL;
-
-		clk_period_ns = (u64)NSEC_PER_SEC * 256;
-		do_div(clk_period_ns, clk_freq);
-	}
-
 	for (pres = 0; pres <= ATMEL_HLCDC_PWMPS_MAX; pres++) {
 		/* Errata: cannot divide by 1 on some IP revisions */
 		if (!pres && chip->errata && chip->errata->div1_clk_erratum)
