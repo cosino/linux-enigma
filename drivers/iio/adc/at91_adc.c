@@ -1104,7 +1104,7 @@ static int at91_ts_register(struct at91_adc_state *st,
 				     0, 0);
 		input_set_abs_params(input, ABS_Y, 0, (1 << MAX_POS_BITS) - 1,
 				     0, 0);
-		input_set_abs_params(input, ABS_PRESSURE, 0, 0xffffff, 0, 0);
+		input_set_abs_params(input, ABS_PRESSURE, 0, st->ts_pressure_threshold, 0, 0);
 	} else {
 		if (st->touchscreen_type != ATMEL_ADC_TOUCHSCREEN_4WIRE) {
 			dev_err(&pdev->dev,
